@@ -6,11 +6,8 @@ library(glue)
 # No scientific notation
 options(scipen = 999)
 
-# You can use the following line to download the data directly from the Socrata API, but it is slow
-# data <- RSocrata::read.socrata("https://data.ct.gov/resource/b674-jy6w.csv")
-
-# Create a tibble called 'data'
-data <- data.table::fread("pretrial_data.csv") %>%
+# Download the data from the Socrata API into a tibble called 'data'
+data <- RSocrata::read.socrata("https://data.ct.gov/resource/b674-jy6w.csv")%>%
   tibble::as_tibble() %>% 
   # Parse the date from the 'download_date' and 'latest_admission_date' column variables
   dplyr::mutate(
