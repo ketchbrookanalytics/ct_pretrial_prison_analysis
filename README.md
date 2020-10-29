@@ -6,6 +6,6 @@ The data around Connecticut individual incarceration statistics can be found her
 The ethnicity-based risk categories were defined using the guidance from the CDC found here: [COVID-19 in Racial and Ethnic Minority Groups
 ](https://www.cdc.gov/coronavirus/2019-ncov/need-extra-precautions/racial-ethnic-minorities.html)
 
-The code that generated the visualization can be found [here](00_analysis.R), and the resulting visualization can be seen below:
+The code that generated the visualization can be found [here](analysis.R), and the resulting visualization can be seen below:
 
 ![](covid19_nonviolent_inmate_risk_ct.png)
