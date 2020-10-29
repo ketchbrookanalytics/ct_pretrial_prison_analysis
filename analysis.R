@@ -1,22 +1,24 @@
 library(tidyverse)
 library(RSocrata)
-library(data.table)
+# library(data.table)
 library(glue)
+library(dtplyr)
+library(lubridate)
+
+source("funs.R")
 
 # No scientific notation
 options(scipen = 999)
 
 # Download the data from the Socrata API into a tibble called 'data'
-data <- RSocrata::read.socrata("https://data.ct.gov/resource/b674-jy6w.csv")%>%
-  tibble::as_tibble() %>% 
+data <- get_data() %>% 
+  dtplyr::lazy_dt() %>% 
+  # tibble::as_tibble() %>% 
   # Parse the date from the 'download_date' and 'latest_admission_date' column variables
   dplyr::mutate(
     download_date = as.Date(substr(download_date, 1, 10)), 
     latest_admission_date = as.Date(substr(latest_admission_date, 1, 10))
   ) %>% 
-  # Only keep the most recent upload of the data to the repository 
-  # (data is uploaded daily, causing a lot of redundancy for analysis purposes)
-  dplyr::filter(download_date == max(download_date)) %>% 
   # Keep only the desired columns by name
   dplyr::select(
     identifier, 
@@ -37,7 +39,8 @@ data <- RSocrata::read.socrata("https://data.ct.gov/resource/b674-jy6w.csv")%>%
   ) %>% 
   # Keep only observations where the inmate is not being detained for a special 
   # reason, on behalf of another state or the Fed, etc.
-  dplyr::filter(detainer == "NONE")
+  dplyr::filter(detainer == "NONE") %>% 
+  tibble::as_tibble()
 
 # Define keywords found in the 'offense' column variable that we consider to be
 # indicative that the offense was violent
@@ -71,12 +74,12 @@ nonviolent_tbl <- data %>%
   )
 
 # View summary statistics of the number of nonviolent inmates by race
-nonviolent_tbl %>% 
-  dplyr::count(race)
+# nonviolent_tbl %>% 
+#   dplyr::count(race)
 
 # View summary statistics of the number of nonviolent inmates age 65+
-nonviolent_tbl %>% 
-  dplyr::filter(age >= 65)
+# nonviolent_tbl %>% 
+#   dplyr::filter(age >= 65)
 
 # View summary statistics on the most common types of nonviolent offenses
 nonviolent_tbl %>% 
